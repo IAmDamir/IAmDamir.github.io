@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Damir Temirgaliyev Reel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* Layout idea: a screening room. One big player is the focus; the gallery below is grouped by the two Omnium projects. */
+  --bg: #111214;
+  --panel: #18191c;
+  --line: #2a2c31;
+  --ink: #ebe8e1;
+  --muted: #94969b;
+  --accent: #ebe8e1;
+  --rec: #ff5a4e;
+  /* discipline colours (info panel, filters, thumbnail tags) */
+  --c-code: #6ea8ff;
+  --c-vfx: #ff8a2a;
+  --c-anim: #b48cff;
+  /* project colours (swatches, thumbnail base bar) */
+  --p-heist: #e9c46a;
+  --p-adventure: #7ccf8a;
+  --p-dust: #ef4b4b;
+  --p-studies: #9aa7b4;
+  --display: "Bricolage Grotesque", "Arial Narrow", system-ui, sans-serif;
+  --body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--bg); color: var(--ink); font: 16px/1.6 var(--body); }
+a { color: inherit; }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.wrap { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
+.label { font: 600 11px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+
+/* top bar */
+.bar { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--line); }
+.bar .rec { display: flex; align-items: center; gap: 10px; }
+.bar .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--rec); box-shadow: 0 0 10px var(--rec); }
+.bar-right { display: flex; align-items: center; gap: 16px; }
+.lang { display: flex; border: 1px solid var(--line); border-radius: 4px; overflow: hidden; }
+.lang button { background: none; border: 0; color: var(--muted); font: 600 11px/1 var(--mono); letter-spacing: .08em; padding: 8px 12px; cursor: pointer; }
+.lang button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+
+/* hero */
+.hero { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(280px, 1fr); gap: 48px; align-items: end; padding: 56px 0 48px; }
+.hero h1 { font: 700 clamp(44px, 7.5vw, 104px)/.92 var(--display); letter-spacing: -.03em; margin: 0 0 20px; }
+.hero h1 .last { display: block; color: var(--muted); font-weight: 500; }
+.hero .role { font: 500 clamp(18px, 2vw, 22px)/1.45 var(--body); max-width: 42ch; margin: 0 0 24px; }
+.hero .role b { color: #fff; font-weight: 600; }
+.badges { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; margin: 0; padding: 0; }
+.badges li { font: 600 13px/1 var(--body); padding: 9px 12px; border: 1px solid var(--line); border-radius: 4px; background: var(--panel); }
+.badges li { display: inline-flex; align-items: center; gap: 8px; }
+.badges li img { height: 18px; width: auto; display: block; }
+.employer { display: flex; align-items: center; gap: 14px; }
+.employer img { width: 40px; height: 40px; object-fit: contain; padding: 8px; background: #000; border: 1px solid var(--line); border-radius: 6px; flex: none; }
+.employer div { display: grid; gap: 4px; }
+.badges li.main { border-color: #55585f; }
+
+.facts { display: grid; gap: 20px; padding: 24px; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; }
+.facts .row { display: grid; gap: 6px; }
+.facts .row + .row { padding-top: 20px; border-top: 1px solid var(--line); }
+.facts strong { font: 600 17px/1.3 var(--body); }
+.facts .sub { color: var(--muted); font-size: 14px; line-height: 1.5; }
+.facts .when { font: 12px/1 var(--mono); color: var(--ink); }
+
+/* stage */
+.modal { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; padding: 24px; }
+.modal[hidden] { display: none; }
+.modal-backdrop { position: absolute; inset: 0; background: rgba(8,9,10,.86); backdrop-filter: blur(4px); }
+.stage { position: relative; width: min(1240px, 100%); max-height: calc(100vh - 48px); overflow: auto; box-shadow: 0 30px 80px rgba(0,0,0,.6);
+ display: grid; grid-template-columns: minmax(0, 2.3fr) minmax(280px, 1fr); gap: 0; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; background: var(--panel); scroll-margin-top: 16px; }
+.screen { background: #000; display: flex; align-items: center; }
+.screen video, .screen .still { width: 100%; aspect-ratio: 16 / 9; height: auto; display: block; object-fit: contain; background: #000; }
+.screen [hidden] { display: none; }
+.stage { --cat: var(--c-code); --pc: var(--p-heist); border-top: 3px solid var(--cat); transition: border-color .3s ease; }
+.info { padding: 24px; display: flex; flex-direction: column; gap: 14px; border-left: 1px solid var(--line); min-width: 0; background: linear-gradient(180deg, color-mix(in srgb, var(--cat) 10%, var(--panel)), var(--panel) 60%); }
+.info-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.close { background: none; border: 1px solid var(--line); border-radius: 4px; width: 32px; height: 32px; cursor: pointer; font: 14px/1 var(--body); color: var(--ink); }
+.close:hover { border-color: var(--ink); }
+body.locked { overflow: hidden; }
+.info .cat { align-self: start; font: 600 10px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; padding: 6px 8px; border-radius: 3px; background: var(--cat); color: #111; }
+.info .proj { font: 600 11px/1.4 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--pc); display: flex; align-items: center; gap: 8px; }
+.info .proj::before { content: ""; width: 10px; height: 10px; border-radius: 2px; background: var(--pc); flex: none; }
+.info h2 { font: 700 26px/1.15 var(--display); letter-spacing: -.01em; margin: 0; text-wrap: balance; }
+.info p { margin: 0; color: var(--muted); font-size: 15px; }
+.info ul.details { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; font-size: 14.5px; line-height: 1.5; }
+.info ul.details li { padding-left: 16px; position: relative; }
+.info ul.details li::before { content: ""; position: absolute; left: 0; top: .62em; width: 6px; height: 6px; background: var(--cat); }
+.stack { display: flex; flex-wrap: wrap; gap: 6px; list-style: none; padding: 0; margin: 0; }
+.stack li { font: 11px/1 var(--mono); padding: 6px 8px; border: 1px solid var(--line); border-radius: 3px; }
+.info .stack li { border-color: color-mix(in srgb, var(--cat) 45%, var(--line)); }
+.nav { margin-top: auto; display: flex; justify-content: space-between; align-items: center; gap: 8px; padding-top: 8px; }
+.nav button { background: none; border: 1px solid var(--line); border-radius: 4px; padding: 8px 12px; cursor: pointer; font: 600 12px/1 var(--mono); }
+.nav button:hover { border-color: var(--ink); }
+.nav .count { font: 12px/1 var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+
+/* gallery */
+.gallery-head { display: flex; justify-content: space-between; align-items: end; gap: 16px; flex-wrap: wrap; margin: 64px 0 8px; }
+.gallery-head h2 { font: 700 clamp(28px, 3.5vw, 40px)/1 var(--display); letter-spacing: -.02em; margin: 0; }
+.filters { display: flex; flex-wrap: wrap; gap: 6px; }
+.filters button { background: none; border: 1px solid var(--line); border-radius: 999px; padding: 8px 14px; cursor: pointer; font: 500 13px/1 var(--body); }
+.filters button[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.filters button:disabled { color: var(--muted); cursor: default; opacity: .6; }
+.filters .sw { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--c); margin-right: 8px; vertical-align: 1px; }
+.filters .n { font: 11px/1 var(--mono); margin-left: 6px; opacity: .7; }
+
+.project { color: var(--ink); padding: 32px; margin-top: 28px; border-radius: 10px; border: 1px solid var(--line); background: var(--sec-bg, var(--panel)); }
+/* each project gets its own world */
+.theme-heist { --sec-bg: radial-gradient(120% 70% at 0% 0%, rgba(233,196,106,.16), transparent 60%), linear-gradient(180deg, #1c1912, #141413); --line: #3a3424; }
+.theme-adventure { --sec-bg: radial-gradient(120% 70% at 100% 0%, rgba(124,207,138,.13), transparent 60%), linear-gradient(180deg, #121c17, #121514); --line: #26372d; }
+.theme-studies { --sec-bg: linear-gradient(180deg, #2f3439, #1d2024); --line: #3f464e; --muted: #a9b2bc; }
+.theme-dust { --ink: #161616; --muted: #474747; --line: #a9a59e;
+  --sec-bg: repeating-linear-gradient(45deg, rgba(0,0,0,.035) 0 1px, transparent 1px 7px), repeating-linear-gradient(-45deg, rgba(0,0,0,.025) 0 1px, transparent 1px 9px), linear-gradient(180deg, #dcd9d3, #c9c6c0);
+  border-color: #8f8b84; }
+.theme-dust .project-head h3 { color: #111; }
+.theme-dust .project-head h3::before { background: #c8102e; }
+.theme-dust .project-head .store { color: #b3101f; }
+.theme-dust .project-head .store:hover { color: #111; }
+.theme-dust .project-head .tags span { background: rgba(255,255,255,.35); color: #333; }
+.theme-dust .group-head span:last-child { border-bottom: 2px solid #c8102e; padding-bottom: 2px; }
+.theme-dust .tile { border-color: #8f8b84; box-shadow: 0 6px 18px rgba(0,0,0,.18); }
+.project[hidden] { display: none; }
+.project-head { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px 24px; margin-bottom: 20px; align-items: start; }
+.project-head h3 { font: 700 22px/1.2 var(--display); margin: 0; display: flex; align-items: center; gap: 12px; }
+.project-head h3::before { content: ""; width: 14px; height: 14px; border-radius: 3px; background: var(--pc); flex: none; }
+.project-head .store { font: 600 12px/1 var(--mono); color: var(--pc); text-decoration: none; border-bottom: 1px solid currentColor; padding-bottom: 2px; justify-self: start; grid-column: 1; }
+.project-head .store:hover { color: var(--ink); }
+.project-head p { margin: 0; color: var(--muted); max-width: 68ch; grid-column: 1; }
+.project-head .tags { grid-column: 2; grid-row: 1 / span 3; display: flex; gap: 6px; flex-wrap: wrap; justify-content: end; }
+.project-head .tags span { font: 11px/1 var(--mono); padding: 6px 8px; border-radius: 3px; background: rgba(0,0,0,.25); border: 1px solid var(--line); color: var(--muted); }
+.thumbs { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+.thumb { display: grid; gap: 10px; text-align: left; background: none; border: 0; padding: 0; cursor: pointer; }
+.thumb[hidden] { display: none; }
+.thumb .img { position: relative; aspect-ratio: 16 / 9; border-radius: 4px; overflow: hidden; border: 1px solid var(--line); background: #000; }
+.thumb .img::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: var(--pc); }
+.thumb .ctag { position: absolute; left: 8px; top: 8px; font: 600 10px/1 var(--mono); letter-spacing: .1em; padding: 5px 7px; background: var(--cat); color: #111; border-radius: 2px; }
+.thumb img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .25s ease; }
+.thumb:hover img { transform: scale(1.03); }
+.thumb .dur { position: absolute; right: 8px; bottom: 11px; font: 11px/1 var(--mono); padding: 4px 6px; background: rgba(0,0,0,.7); border-radius: 2px; }
+.thumb .now { position: absolute; right: 8px; top: 8px; font: 600 10px/1 var(--mono); letter-spacing: .1em; padding: 5px 7px; background: var(--ink); color: #111; border-radius: 2px; display: none; }
+.thumb[aria-current="true"] .img { border-color: var(--ink); box-shadow: 0 0 0 1px var(--ink); }
+.thumb[aria-current="true"] .now { display: block; }
+.thumb .t { font: 500 15px/1.3 var(--body); }
+.group { margin: 28px auto 36px; max-width: 1080px; }
+.group.focus { max-width: 1180px; }
+.group.focus .group-grid { grid-template-columns: 2fr 1fr; }
+.group-head { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; font: 600 15px/1.3 var(--body); }
+.group-head .ctag { font: 600 10px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; padding: 5px 7px; background: var(--cat); color: #111; border-radius: 2px; }
+.group-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.group.focus .tile:first-child { grid-column: 1; grid-row: 1 / span 2; aspect-ratio: auto; }
+@media (max-width: 640px) { .group.focus .group-grid { grid-template-columns: 1fr 1fr; } .group.focus .tile:first-child { grid-column: 1 / -1; grid-row: auto; aspect-ratio: 16 / 9; } }
+.group.trio .group-grid { grid-template-columns: repeat(3, 1fr); }
+@media (max-width: 640px) { .group.trio .group-grid { grid-template-columns: 1fr; } }
+.tile { position: relative; margin: 0; aspect-ratio: 16 / 9; border-radius: 4px; overflow: hidden; background: #000; border: 1px solid var(--line); }
+.tile { cursor: pointer; }
+.tile:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.tile video, .tile img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.kind { position: absolute; right: 8px; top: 8px; font: 600 10px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; padding: 5px 7px; border-radius: 2px; pointer-events: none; z-index: 2; }
+.kind.vid { background: rgba(0,0,0,.72); color: #ebe8e1; }
+.kind.shot { background: #ebe8e1; color: #111; }
+/* screenshots sit in a white photo mat so they never read as video */
+.tile.is-shot { background: #ebe8e1; padding: 6px 6px 9px; }
+.tile.is-shot img { border-radius: 2px; }
+.tile .hover-icon { position: absolute; left: 50%; top: 50%; width: 56px; height: 56px; margin: -28px 0 0 -28px; border-radius: 50%; display: grid; place-items: center; font-size: 22px; background: rgba(0,0,0,.6); color: #fff; opacity: 0; transition: opacity .2s ease; pointer-events: none; z-index: 2; }
+.tile:hover .hover-icon, .tile:focus-visible .hover-icon { opacity: 1; }
+.tile:hover figcaption { background: #ebe8e1; color: #111; }
+.tile .pbar { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; z-index: 1; }
+.tile figcaption { position: absolute; left: 10px; bottom: 12px; font: 500 13px/1.2 var(--body); padding: 5px 8px; background: rgba(0,0,0,.7); color: #ebe8e1; border-radius: 3px; pointer-events: none; }
+/* projects strip */
+.projects { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 12px; margin-top: 20px; }
+.pcard { overflow: hidden; display: flex; flex-direction: column; gap: 10px; padding: 18px; border: 1px solid var(--line); border-top: 3px solid var(--pc); border-radius: 6px; background: linear-gradient(180deg, color-mix(in srgb, var(--pc) 9%, var(--panel)), var(--panel) 70%); }
+.pcard .cover { position: relative; display: block; margin: -18px -18px 4px; padding: 0; border: 0; cursor: pointer; aspect-ratio: 16 / 9; overflow: hidden; border-radius: 3px 3px 0 0; background: #000; }
+.pcard .cover img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .3s ease; }
+.pcard .cover:hover img { transform: scale(1.04); }
+
+.pcard h3 { font: 700 17px/1.25 var(--display); margin: 0; display: flex; gap: 10px; align-items: center; }
+.pcard h3::before { content: ""; width: 10px; height: 10px; border-radius: 2px; background: var(--pc); flex: none; }
+.pcard p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.55; }
+.pcard .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; }
+.pcard .tags span { font: 11px/1 var(--mono); padding: 5px 7px; border-radius: 3px; border: 1px solid var(--line); color: var(--muted); }
+.pcard .store { font: 600 12px/1 var(--mono); color: var(--pc); text-decoration: none; }
+.pcard .store:hover { text-decoration: underline; }
+.jump { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.jump .label { margin-right: 4px; }
+.jump a { text-decoration: none; border: 1px solid var(--line); border-radius: 999px; padding: 8px 14px; font: 500 13px/1 var(--body); display: inline-flex; align-items: center; gap: 8px; }
+.jump a:hover { border-color: var(--c); color: var(--c); }
+.jump .sw { width: 8px; height: 8px; border-radius: 50%; background: var(--c); }
+
+/* skill sections */
+.skill { margin-top: 40px; padding: 36px 32px 12px; border-radius: 10px; border: 1px solid var(--line); border-top: 3px solid var(--cat); scroll-margin-top: 16px;
+  background: radial-gradient(110% 50% at 0% 0%, color-mix(in srgb, var(--cat) 13%, transparent), transparent 60%), var(--panel); }
+.skill-head { max-width: 1080px; margin: 0 auto 8px; }
+.skill-head h2 { font: 700 clamp(30px, 4vw, 44px)/1 var(--display); letter-spacing: -.02em; margin: 0 0 10px; display: flex; align-items: center; gap: 14px; }
+.skill-head h2::before { content: ""; width: 16px; height: 16px; border-radius: 4px; background: var(--cat); flex: none; }
+.skill-head p { margin: 0; color: var(--muted); max-width: 64ch; }
+.group-head { flex-wrap: wrap; }
+.group-head .gt { font: 600 16px/1.3 var(--body); margin-right: 6px; }
+.pchip { display: inline-flex; align-items: center; gap: 6px; font: 11px/1 var(--mono); color: var(--muted); padding: 5px 8px; border: 1px solid var(--line); border-radius: 999px; }
+.pchip::before { content: ""; width: 8px; height: 8px; border-radius: 2px; background: var(--pc); }
+/* Dust of Past groups keep the game's pencil-paper look */
+.group.paper { padding: 16px 16px 18px; border-radius: 8px; color: #161616; border: 1px solid #8f8b84;
+  background: repeating-linear-gradient(45deg, rgba(0,0,0,.035) 0 1px, transparent 1px 7px), repeating-linear-gradient(-45deg, rgba(0,0,0,.025) 0 1px, transparent 1px 9px), linear-gradient(180deg, #dcd9d3, #c9c6c0); }
+.group.paper .gt { border-bottom: 2px solid #c8102e; padding-bottom: 2px; }
+.group.paper .pchip { color: #333; border-color: #a9a59e; background: rgba(255,255,255,.35); }
+.group.paper .pchip::before { background: #c8102e; }
+.group.paper .tile { border-color: #8f8b84; }
+.empty-note { color: var(--muted); font: 13px/1.5 var(--mono); padding: 24px 0; border-top: 1px solid var(--line); margin-top: 24px; }
+.empty-note[hidden] { display: none; }
+
+.contacts { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+.clink { font: 500 14px/1.3 var(--body); color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--line); }
+.clink:hover { border-color: var(--ink); }
+.copy { background: none; border: 1px solid var(--line); border-radius: 4px; padding: 4px 8px; cursor: pointer; font: 600 11px/1 var(--mono); color: var(--muted); }
+.copy:hover { color: var(--ink); border-color: var(--ink); }
+.contact-band { margin-top: 56px; padding: 40px 32px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); display: grid; gap: 14px; scroll-margin-top: 16px; }
+.contact-band h2 { font: 700 clamp(28px, 4vw, 44px)/1 var(--display); letter-spacing: -.02em; margin: 0; }
+.contact-band p { margin: 0; color: var(--muted); max-width: 60ch; }
+.contacts.big .clink { font-size: clamp(16px, 2vw, 20px); }
+footer { border-top: 1px solid var(--line); margin-top: 48px; padding: 28px 0 48px; display: flex; flex-wrap: wrap; gap: 12px 32px; justify-content: space-between; font: 13px/1.5 var(--mono); color: var(--muted); }
+
+@media (max-width: 900px) {
+  .hero { grid-template-columns: 1fr; gap: 32px; padding-top: 40px; }
+  .stage { grid-template-columns: 1fr; }
+  .info { border-left: 0; border-top: 1px solid var(--line); }
+  .project-head { grid-template-columns: 1fr; }
+  .project-head .tags { grid-column: 1; grid-row: auto; justify-content: start; }
+}
+@media (max-width: 480px) { .skill { padding: 24px 14px 6px; } .group.paper { padding: 10px; } .wrap { padding: 0 16px; } .thumbs { grid-template-columns: 1fr 1fr; gap: 12px; } .thumb .t { font-size: 13px; } }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="bar">
+    <div class="rec"><span class="dot" aria-hidden="true"></span><span class="label" data-i18n="rec">Game developer · Astana, KZ</span></div>
+    <div class="bar-right">
+      <a class="label" href="#contact" data-i18n="contactLink">Contact</a>
+      <div class="lang" role="group" aria-label="Language">
+        <button id="lang-en" type="button" data-lang="en" aria-pressed="true">EN</button>
+        <button id="lang-ru" type="button" data-lang="ru" aria-pressed="false">RU</button>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div>
+      <h1>Damir <span class="last">Temirgaliyev</span></h1>
+      <p class="role" data-i18n-html="role">Game developer for <b>VR and mobile</b>: gameplay programming, VFX and shaders, and character animation in Unreal Engine.</p>
+      <ul class="badges" aria-label="Tech stack">
+        <li class="main"><img src="logos/unreal.png" alt="">Unreal Engine</li>
+        <li class="main">C++</li>
+        <li class="main"><img src="logos/meta.png" alt="">Meta Quest VR</li>
+        <li>Blueprints</li>
+        <li data-i18n="b-net">Multiplayer replication</li>
+        <li data-i18n="b-vfx">Shaders &amp; Niagara VFX</li>
+        <li>Android</li>
+        <li>Maya</li>
+        <li>Cascadeur</li>
+        <li><img src="logos/godot.png" alt="">Godot</li>
+        <li>C#</li>
+      </ul>
+    </div>
+    <aside class="facts">
+      <div class="row">
+        <span class="when" data-i18n="omnium-when">Jun 2023 – Nov 2025 · 2.5 years</span>
+        <div class="employer"><img src="logos/omnium.png" alt="Omnium"><div><strong data-i18n="omnium-t">Game Developer at Omnium</strong></div></div>
+        <span class="sub" data-i18n="omnium-d">Gameplay, VFX and animation across three projects, including Dust of Past on Google Play.</span>
+      </div>
+      <div class="row">
+        <span class="label" data-i18n="h-edu">Education</span>
+        <strong data-i18n="bs-t">Bachelor of Computer Science · graduated 2023</strong>
+        <strong data-i18n="ms-t">Master of Media Technologies · graduated 2025</strong>
+        <span class="sub">Astana IT University</span>
+      </div>
+      <div class="row">
+        <span class="label" data-i18n="h-contact">Contact</span>
+        <div class="contacts">
+          <a class="clink" href="mailto:temirgalievdamir03@gmail.com">temirgalievdamir03@gmail.com</a>
+          <button class="copy" id="copy-1" type="button" data-copy="temirgalievdamir03@gmail.com" data-i18n="copy">Copy</button>
+          <a class="clink" href="https://t.me/temirgaliyev" target="_blank" rel="noopener">Telegram @temirgaliyev</a>
+        </div>
+      </div>
+      <div class="row">
+        <span class="label" data-i18n="h-lang">Languages</span>
+        <span class="sub" data-i18n="langs">Russian (native) · English (B2) · Kazakh (B1)</span>
+      </div>
+    </aside>
+  </section>
+
+  <div class="modal" id="modal" hidden>
+    <div class="modal-backdrop" id="modal-backdrop"></div>
+    <section class="stage" id="stage" role="dialog" aria-modal="true" aria-labelledby="i-title">
+      <div class="screen"><video id="player" controls playsinline preload="metadata"></video><img class="still" id="still" alt="" hidden></div>
+      <div class="info">
+        <div class="info-top"><span class="cat" id="i-cat"></span><button class="close" id="close" type="button" aria-label="Close">✕</button></div>
+        <span class="proj" id="i-proj"></span>
+        <h2 id="i-title"></h2>
+        <p id="i-desc"></p>
+        <ul class="details" id="i-details"></ul>
+        <ul class="stack" id="i-stack"></ul>
+        <div class="nav">
+          <button id="prev" type="button" data-i18n="prev">← Prev</button>
+          <span class="count" id="i-count"></span>
+          <button id="next" type="button" data-i18n="next">Next →</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <section class="projects-wrap" aria-labelledby="h-projects">
+    <div class="gallery-head">
+      <h2 id="h-projects" data-i18n="projects">Projects</h2>
+      <nav class="jump" id="jump" aria-label="Jump to a skill"></nav>
+    </div>
+    <div class="projects" id="projects"></div>
+  </section>
+  <div id="gallery"></div>
+
+  <section class="contact-band" id="contact" aria-labelledby="h-contact-band">
+    <h2 id="h-contact-band" data-i18n="cta">Let's work together</h2>
+    <p data-i18n="cta-sub">Reach me by email or on Telegram.</p>
+    <div class="contacts big">
+          <a class="clink" href="mailto:temirgalievdamir03@gmail.com">temirgalievdamir03@gmail.com</a>
+          <button class="copy" type="button" id="copy-2" data-copy="temirgalievdamir03@gmail.com" data-i18n="copy">Copy</button>
+          <a class="clink" href="https://t.me/temirgaliyev" target="_blank" rel="noopener">Telegram @temirgaliyev</a>
+    </div>
+  </section>
+  <footer>
+    <span>© 2026 Damir Temirgaliyev</span>
+    <span data-i18n="credit">Godot logo by Andrea Calabró, CC BY 4.0</span>
+  </footer>
+</div>
+
+<script>
+const PROJECTS = [
+  { id: "heist", color: "var(--p-heist)", cover: "hustling",
+    title: { en: "Asymmetric multiplayer: VR vs mobile", ru: "Асимметричный мультиплеер: VR против мобильных" },
+    desc: { en: "The host plays in a VR headset as a boss guarding piles of gold. Clients join from their phones and try to steal it.", ru: "Хост играет в VR-шлеме за босса, который охраняет кучи золота. Клиенты подключаются с телефонов и пытаются его украсть." },
+    tags: ["Meta Quest", "Android", "Multiplayer"] },
+  { id: "adventure", color: "var(--p-adventure)", cover: "rope", groupsFirst: true,
+    title: { en: "VR adventure (single-player)", ru: "VR-приключение (одиночная игра)" },
+    desc: { en: "A game in the spirit of Moss: the player sits in place with a headset on and guides a small character through the levels.", ru: "Игра в духе Moss: игрок сидит на месте в шлеме и ведёт маленького персонажа по уровням." },
+    tags: ["Meta Quest", "Single-player"] },
+  { id: "studies", color: "var(--p-studies)", cover: "walk-cycle",
+    title: { en: "Animation studies", ru: "Анимационные этюды" },
+    desc: { en: "Maya work from Pipeline 3.0, Omnium's animation course, which I took alongside my Bachelor's.", ru: "Работы в Maya с курса Pipeline 3.0 от Omnium, который я проходил параллельно с бакалавриатом." },
+    tags: ["Maya", "Pipeline 3.0"] },
+  { id: "dust", color: "var(--p-dust)", cover: "dop-boss-slash", store: "https://play.google.com/store/apps/details?id=com.stardustcrusaders.dustofpast",
+    title: { en: "Dust of Past (released demo)", ru: "Dust of Past (выпущенное демо)" },
+    desc: { en: "A rhythm adventure set in ancient Japan, released by Omnium on Google Play. A boy with a mysterious past fights ninjas and demons in a pencil-drawn black, white and red world. I made the pencil-hatching shader, the slash and splatter VFX, and the boss animations.", ru: "Ритм-приключение в древней Японии, выпущенное Omnium в Google Play. Мальчик с загадочным прошлым сражается с ниндзя и демонами в чёрно-бело-красном мире, нарисованном карандашом. Я сделал шейдер карандашной штриховки, VFX ударов и брызг и анимации босса." },
+    tags: ["Unreal Engine 5", "Android", "Rhythm", "Released"] }
+];
+
+const CLIPS = [
+  { id: "hustling", group: "g-core", project: "heist", cat: "code", src: "videos/hustling.mp4", poster: "posters/hustling.jpg", dur: "0:13",
+    title: { en: "Hustling: stealing the gold", ru: "Hustling: кража золота" },
+    desc: { en: "The core mechanic. Gold piles around the VR boss hold a limited amount, and mobile players collect it just by standing on a pile.", ru: "Основная механика. Вокруг VR-босса лежат кучи золота с ограниченным запасом, и мобильные игроки собирают его, просто стоя на куче." },
+    details: {
+      en: ["Collection progress is tied to an animation that can be sped up, slowed down or stopped",
+           "The animation is replicated, so everyone sees whether a steal has just started or is nearly done",
+           "Each character has its own carrying capacity",
+           "A killed carrier drops a money bag. Destroy it and it turns back into a pile that can be collected again"],
+      ru: ["Прогресс сбора привязан к анимации, которую можно ускорить, замедлить или остановить",
+           "Анимация реплицируется по сети: все видят, начал ли игрок сбор или уже заканчивает",
+           "У каждого персонажа своя грузоподъёмность",
+           "Убитый игрок роняет мешок с деньгами. Если его уничтожить, он снова превращается в кучу, которую можно собрать"] },
+    stack: ["C++", "Blueprints", "Replication", "Android"] },
+  { id: "odyssey-camera", group: "g-core", project: "heist", cat: "code", src: "videos/odyssey-camera.mp4", poster: "posters/odyssey-camera.jpg", dur: "0:27",
+    title: { en: "Camera inspired by Super Mario Odyssey", ru: "Камера в стиле Super Mario Odyssey" },
+    desc: { en: "A camera component for the mobile players, written in C++ for performance.", ru: "Компонент камеры для мобильных игроков, написан на C++ ради производительности." },
+    details: {
+      en: ["Keeps the player in the centre, but lets them drift off-centre briefly before catching up",
+           "Doesn't change height on every jump",
+           "Moves vertically only after long airtime, strong vertical momentum, or a landing at a new elevation"],
+      ru: ["Держит игрока в центре, но позволяет ему ненадолго сместиться, прежде чем догнать",
+           "Не меняет высоту при каждом прыжке",
+           "Смещается по вертикали только при долгом нахождении в воздухе, сильном вертикальном импульсе или приземлении на другой высоте"] },
+    stack: ["C++", "Camera component", "Android"] },
+  { id: "camera", group: "g-core", project: "heist", cat: "code", src: "videos/camera.mp4", poster: "posters/camera.jpg", dur: "0:18",
+    title: { en: "Camera through jumps and gliding", ru: "Камера в прыжках и планировании" },
+    desc: { en: "The camera component during jumps, the glide ability and around tall level geometry.", ru: "Компонент камеры в прыжках, при планировании и рядом с высокой геометрией уровня." },
+    details: { en: ["Keeps the player readable on a small touch screen"], ru: ["Игрок остаётся хорошо видимым на маленьком сенсорном экране"] },
+    stack: ["C++", "Camera component", "Android"] },
+  { id: "ledge", group: "g-climb", project: "adventure", cat: "code", src: "videos/ledge.mp4", poster: "posters/ledge.jpg", dur: "0:14",
+    title: { en: "Ledge grab and climb", ru: "Зацеп за край и подъём" },
+    desc: { en: "The character catches a ledge mid-jump, hangs from it and climbs up.", ru: "Персонаж цепляется за край в прыжке, повисает и забирается наверх." },
+    details: { en: ["Works with any ledge, with no per-ledge setup"], ru: ["Работает с любым краем без отдельной настройки"] },
+    stack: ["Unreal Engine", "Meta Quest"] },
+  { id: "ladder", group: "g-climb", project: "adventure", cat: "code", src: "videos/ladder.mp4", poster: "posters/ladder.jpg", dur: "0:16",
+    title: { en: "Ladder climbing", ru: "Лазание по лестнице" },
+    desc: { en: "Attach to a ladder, climb up or down, and step off at either end.", ru: "Персонаж цепляется за лестницу, поднимается или спускается и сходит на любом конце." },
+    details: { en: ["Works with any ladder height", "Customizable ladders: mesh, vertical offset and scale"], ru: ["Работает с лестницей любой высоты", "Настраиваемые лестницы: меш, вертикальное смещение и масштаб"] },
+    stack: ["Unreal Engine", "Meta Quest"] },
+  { id: "rope", group: "g-climb", project: "adventure", cat: "code", src: "videos/rope.mp4", poster: "posters/rope.jpg", dur: "0:31",
+    title: { en: "Physics rope climbing", ru: "Лазание по физической верёвке" },
+    desc: { en: "A climbing system built on a physics-driven rope.", ru: "Система лазания по верёвке с физикой." },
+    details: { en: ["Swing the rope in any horizontal direction", "Climb up and down", "Let go and keep the rope's momentum"], ru: ["Раскачивание в любом горизонтальном направлении", "Подъём и спуск", "При отцеплении персонаж сохраняет импульс верёвки"] },
+    stack: ["Unreal Engine", "Physics", "Meta Quest"] },
+  { id: "zipline-1", group: "g-zip", project: "adventure", cat: "code", src: "videos/zipline-1.mp4", poster: "posters/zipline-1.jpg", dur: "0:08",
+    title: { en: "Zipline ride", ru: "Спуск по зиплайну" },
+    desc: { en: "Grab the cable at an anchor and slide along it to the far end.", ru: "Персонаж хватается за трос у опоры и скользит к дальнему концу." },
+    details: { en: ["The cable follows a spline, so any arc can be ridden"], ru: ["Трос построен на сплайне, поэтому спуск работает на любой дуге"] },
+    stack: ["Unreal Engine", "Spline", "Meta Quest"] },
+  { id: "zipline-2", group: "g-zip", project: "adventure", cat: "code", src: "videos/zipline-2.mp4", poster: "posters/zipline-2.jpg", dur: "0:10",
+    title: { en: "Zipline arrival", ru: "Зиплайн: прибытие" },
+    desc: { en: "A ride seen from the arrival point, ending in a landing at the anchor.", ru: "Спуск с точки прибытия и приземление у опоры." },
+    details: { en: [], ru: [] },
+    stack: ["Unreal Engine", "Spline", "Meta Quest"] },
+  { id: "zipline-tools", group: "g-zip", project: "adventure", cat: "code", src: "videos/zipline-tools.mp4", poster: "posters/zipline-tools.jpg", dur: "0:45",
+    title: { en: "Zipline tool for level designers", ru: "Инструмент зиплайнов для дизайнеров" },
+    desc: { en: "Place two anchors in the editor and the cable is built between them.", ru: "Ставишь две опоры в редакторе, и трос строится между ними." },
+    details: { en: ["The arc is adjustable: a straight line, or a rope sagging under gravity", "Settings are exposed in the Details panel"], ru: ["Дугу можно настроить: от прямой линии до троса, провисающего под тяжестью", "Параметры доступны в панели Details"] },
+    stack: ["Unreal Editor", "Blueprint actor", "Spline"] },
+
+  /* ---- VFX & shaders ---- */
+  { id: "shining-coins", group: "g-vfx", gridSrc: "videos/shining-coins-grid.mp4", project: "heist", cat: "vfx", src: "videos/shining-coins.mp4", poster: "posters/shining-coins.jpg", dur: "0:09",
+    title: { en: "Shining gold coins", ru: "Блестящие монеты" },
+    desc: { en: "Makes the gold piles catch the eye, since they're what every mobile player is hunting for.", ru: "Кучи золота притягивают взгляд, ведь именно за ними охотятся мобильные игроки." },
+    details: { en: ["Sparkle particles spawn across the surface of a custom mesh", "Toon shading on the coins", "A periodic shine sweep draws the player's attention"],
+               ru: ["Искры-частицы появляются по поверхности кастомного меша", "Тун-шейдинг на монетах", "Периодический блеск привлекает внимание игрока"] },
+    stack: ["Niagara", "Toon shader", "Mobile"] },
+  { id: "bubble", group: "g-vfx", gridSrc: "videos/bubble-grid.mp4", project: "heist", cat: "vfx", src: "videos/bubble.mp4", poster: "posters/bubble.jpg", dur: "0:19",
+    title: { en: "Iridescent bubble shader", ru: "Шейдер радужного пузыря" },
+    desc: { en: "A soap-bubble material with shifting rainbow colours along the edge and a wobbling surface.", ru: "Материал мыльного пузыря: переливающиеся цвета по краю и колышущаяся поверхность." },
+    details: { en: ["Used as gameplay: players get inside the bubbles to float up to higher ground"],
+               ru: ["Часть геймплея: игроки забираются внутрь пузырей, чтобы подняться выше"] },
+    stack: ["Material", "Meta Quest", "Mobile"] },
+  { id: "water", group: "g-vfx", gridSrc: "videos/water-grid.mp4", project: "heist", cat: "vfx", src: "videos/water.mp4", poster: "posters/water.jpg", dur: "0:21",
+    title: { en: "Stylized water", ru: "Стилизованная вода" },
+    desc: { en: "A water surface shader with rolling waves.", ru: "Шейдер водной поверхности с бегущими волнами." },
+    details: { en: ["Waves come from overlapping noise patterns driving the displacement", "Edges turn semi-transparent where the water meets objects"],
+               ru: ["Волны создаются наложением нескольких шумов, управляющих смещением", "Вода становится полупрозрачной у краёв в местах касания с объектами"] },
+    stack: ["Material", "Displacement"] },
+  { id: "wind", group: "g-vfx", gridSrc: "videos/wind-grid.mp4", project: "heist", cat: "vfx", src: "videos/wind.mp4", poster: "posters/wind.jpg", dur: "0:13",
+    title: { en: "Wind on foliage", ru: "Ветер в растительности" },
+    desc: { en: "A global wind shader that sways grass, bushes and tree canopies across the whole level.", ru: "Глобальный шейдер ветра, раскачивающий траву, кусты и кроны деревьев по всему уровню." },
+    details: { en: [], ru: [] }, stack: ["Material", "Foliage"] },
+  { id: "see-through-hole", group: "g-vis", project: "heist", cat: "vfx", src: "videos/see-through-hole.mp4", poster: "posters/see-through-hole.jpg", dur: "0:19",
+    title: { en: "See-through occluders", ru: "Прозрачность перекрывающих объектов" },
+    desc: { en: "Objects between the camera and the player open a dithered hole so the character stays visible.", ru: "В объектах между камерой и игроком появляется дизеринговое отверстие, чтобы персонаж оставался видимым." },
+    details: { en: ["Built for forward rendering: each material works out the player and camera positions itself",
+                    "If the shader finds the object between them, it cuts the hole",
+                    "Dithering masks the object out per pixel, so the GPU never renders both a transparent surface and what's behind it"],
+               ru: ["Сделано под forward-рендеринг: каждый материал сам вычисляет позиции игрока и камеры",
+                    "Если шейдер определяет, что объект между ними, он вырезает отверстие",
+                    "Дизеринг полностью скрывает объект в пикселе, поэтому GPU не рисует одновременно прозрачную поверхность и то, что за ней"] },
+    stack: ["Material", "Forward rendering", "Dithering", "Mobile"] },
+  { id: "per-instance-color", group: "g-vis", project: "heist", cat: "vfx", src: "videos/per-instance-color.mp4", poster: "posters/per-instance-color.jpg", dur: "0:36",
+    title: { en: "Per-instance colour", ru: "Цвет для каждого экземпляра" },
+    desc: { en: "One material, with each placed object getting its own colour from the Details panel.", ru: "Один материал, а цвет каждого объекта задаётся в панели Details." },
+    details: { en: ["Uses a dynamic material instance per object", "Pick a custom colour or let it choose a random one"],
+               ru: ["Для каждого объекта создаётся динамический экземпляр материала", "Цвет можно задать вручную или получить случайный"] },
+    stack: ["Dynamic material instance", "Unreal Editor"] },
+  { id: "see-through", group: "g-vis", project: "adventure", cat: "vfx", src: "videos/see-through.mp4", poster: "posters/see-through.jpg", dur: "0:23",
+    title: { en: "Character visible behind walls", ru: "Персонаж виден за препятствиями" },
+    desc: { en: "When level geometry blocks the view, the character shows through it as a ghostly silhouette.", ru: "Когда геометрия уровня перекрывает обзор, персонаж просвечивает сквозь неё призрачным силуэтом." },
+    details: { en: ["Built with Custom Stencil"], ru: ["Реализовано через Custom Stencil"] },
+    stack: ["Custom Stencil", "Meta Quest"] },
+  { id: "super-attack", group: "g-vis", project: "adventure", cat: "vfx", src: "videos/super-attack.mp4", poster: "posters/super-attack.jpg", dur: "0:10",
+    title: { en: "Super attack effect", ru: "Эффект суперудара" },
+    desc: { en: "Two Niagara systems: the initial particle burst, and a splash sphere for the attack itself.", ru: "Две системы Niagara: начальная генерация частиц и сфера-всплеск самой атаки." },
+    details: { en: ["The splash sphere scales to match the attack's radius, so the visual shows the real hit area",
+                    "Particles move under gravity and turbulence",
+                    "Gravity switches off at the end, so the particles fly off"],
+               ru: ["Размер сферы подстраивается под радиус атаки, поэтому эффект показывает реальную зону поражения",
+                    "Частицы движутся под действием гравитации и турбулентности",
+                    "В конце гравитация отключается, и частицы разлетаются"] },
+    stack: ["Niagara", "Meta Quest"] },
+
+  /* ---- Dust of Past ---- */
+  { id: "dop-hatching-run", group: "g-pencil", project: "dust", cat: "vfx", img: "images/dop-hatching-run.jpg", poster: "posters/dop-hatching-run.jpg",
+    title: { en: "Pencil-hatching shader", ru: "Шейдер карандашной штриховки" },
+    desc: { en: "Hatching that resembles pencil strokes, across trees, bridge and ground, gives every scene its hand-drawn look.", ru: "Штриховка, похожая на карандашные штрихи, на деревьях, мосту и земле придаёт каждой сцене рисованный вид." },
+    details: { en: ["Built as a material on each object rather than a post-process", "A post-process would be simpler, but isn't practical on mobile, so per-material was the way to ship it on Android"],
+               ru: ["Сделано материалом на каждом объекте, а не пост-процессом", "Пост-процесс был бы проще, но на мобильных он практически невозможен, поэтому для Android выбран вариант через материалы"] },
+    stack: ["Material", "Unreal Engine 5", "Android"] },
+  { id: "dop-bamboo", group: "g-pencil", project: "dust", cat: "vfx", img: "images/dop-bamboo.jpg", poster: "posters/dop-bamboo.jpg",
+    title: { en: "Bamboo forest level", ru: "Уровень в бамбуковом лесу" },
+    desc: { en: "The pencil-hatching material on a dense bamboo grove, with depth carried by tone.", ru: "Материал карандашной штриховки на густой бамбуковой роще: глубина передаётся тоном." },
+    details: { en: [], ru: [] }, stack: ["Material", "Android"] },
+  { id: "dop-boss-portrait", group: "g-pencil", project: "dust", cat: "vfx", img: "images/dop-boss-portrait.jpg", poster: "posters/dop-boss-portrait.jpg",
+    title: { en: "Boss in the pencil style", ru: "Босс в карандашном стиле" },
+    desc: { en: "The same pencil hatching and red accents applied to a character.", ru: "Та же карандашная штриховка и красные акценты на персонаже." },
+    details: { en: [], ru: [] }, stack: ["Material"] },
+  { id: "dop-slash-run", group: "g-slash", project: "dust", cat: "vfx", img: "images/dop-slash-run.jpg", poster: "posters/dop-slash-run.jpg",
+    title: { en: "Sword slash in a rhythm run", ru: "Удар мечом в ритм-забеге" },
+    desc: { en: "A glowing slash arc as the player hits enemies on the beat.", ru: "Светящаяся дуга удара, когда игрок бьёт врагов в такт." },
+    details: { en: [], ru: [] }, stack: ["VFX", "Android"] },
+  { id: "dop-boss-fight", group: "g-pencil", project: "dust", cat: "vfx", img: "images/dop-boss-fight.jpg", poster: "posters/dop-boss-fight.jpg",
+    title: { en: "Boss fight: splatter", ru: "Бой с боссом: брызги" },
+    desc: { en: "Black and red splatter effects in a first-person duel with the boss.", ru: "Чёрно-красные брызги в дуэли с боссом от первого лица." },
+    details: { en: [], ru: [] }, stack: ["VFX", "Android"] },
+  { id: "dop-boss-slash", group: "g-slash", project: "dust", cat: "vfx", img: "images/dop-boss-slash.jpg", poster: "posters/dop-boss-slash.jpg",
+    title: { en: "Boss fight: full-screen slash", ru: "Бой с боссом: удар на весь экран" },
+    desc: { en: "A wide slash that sweeps across the arena, with a burning edge.", ru: "Широкий удар через всю арену с пылающей кромкой." },
+    details: { en: [], ru: [] }, stack: ["VFX", "Android"] },
+  { id: "dop-trail-red", group: "g-slash", fit: "contain", tileBg: "#b4b4b6", project: "dust", cat: "vfx", img: "images/dop-trail-red.jpg", poster: "posters/dop-trail-red.jpg",
+    title: { en: "Slash trail shader: fire edge", ru: "Шейдер следа удара: огненная кромка" },
+    desc: { en: "The slash material on its own: a hot leading edge fading into a dithered tail.", ru: "Материал удара отдельно: горячая передняя кромка, переходящая в дизеринговый хвост." },
+    details: { en: [], ru: [] }, stack: ["Material"] },
+  { id: "dop-trail-cyan", group: "g-slash", fit: "contain", tileBg: "#b4b4b6", project: "dust", cat: "vfx", img: "images/dop-trail-cyan.jpg", poster: "posters/dop-trail-cyan.jpg",
+    title: { en: "Slash trail shader: cold variant", ru: "Шейдер следа удара: холодный вариант" },
+    desc: { en: "A cyan colour variant of the same slash material.", ru: "Голубой вариант того же материала удара." },
+    details: { en: [], ru: [] }, stack: ["Material"] },
+  { id: "boss-idle", group: "g-boss", project: "dust", cat: "anim", loop: true, src: "videos/boss-idle.mp4", poster: "posters/boss-idle.jpg", dur: "loop",
+    title: { en: "Boss idle", ru: "Босс: ожидание" },
+    desc: { en: "The boss's guarded idle stance with his sword low.", ru: "Настороженная стойка босса с опущенным мечом." },
+    details: { en: [], ru: [] }, stack: ["Cascadeur", "Character animation"] },
+  { id: "boss-swipe-right", group: "g-boss", project: "dust", cat: "anim", loop: true, src: "videos/boss-swipe-right.mp4", poster: "posters/boss-swipe-right.jpg", dur: "loop",
+    title: { en: "Boss swipe right", ru: "Босс: удар вправо" },
+    desc: { en: "A horizontal sword swipe to the right.", ru: "Горизонтальный удар мечом вправо." },
+    details: { en: [], ru: [] }, stack: ["Cascadeur", "Character animation"] },
+  { id: "boss-swipe-left", group: "g-boss", project: "dust", cat: "anim", loop: true, src: "videos/boss-swipe-left.mp4", poster: "posters/boss-swipe-left.jpg", dur: "loop",
+    title: { en: "Boss swipe left", ru: "Босс: удар влево" },
+    desc: { en: "An overhead wind-up into a sweeping swipe to the left.", ru: "Замах над головой и размашистый удар влево." },
+    details: { en: [], ru: [] }, stack: ["Cascadeur", "Character animation"] },
+  { id: "boss-stomp", group: "g-boss", project: "dust", cat: "anim", loop: true, src: "videos/boss-stomp.mp4", poster: "posters/boss-stomp.jpg", dur: "loop",
+    title: { en: "Boss stomp", ru: "Босс: топот" },
+    desc: { en: "The boss raises his knee and sword, then drops into a low stomp.", ru: "Босс поднимает колено и меч, затем обрушивается в низкий удар ногой." },
+    details: { en: [], ru: [] }, stack: ["Cascadeur", "Character animation"] },
+
+  /* ---- Animation ---- */
+  { id: "walk-cycle", group: "g-walk", gridTitle: { en: "Perspective, walking forward", ru: "Перспектива, ходьба вперёд" }, project: "studies", cat: "anim", loop: true, src: "videos/walk-cycle.mp4", poster: "posters/walk-cycle.jpg", dur: "loop",
+    title: { en: "Ball-body walk cycle", ru: "Цикл ходьбы: персонаж-мяч" },
+    desc: { en: "A walk cycle for a character made of a ball body on two legs, played as a continuous walk.", ru: "Цикл ходьбы для персонажа из мяча на двух ногах в непрерывном движении." },
+    details: { en: [], ru: [] }, stack: ["Maya", "Walk cycle"] },
+  { id: "walk-front", group: "g-walk", project: "studies", cat: "anim", loop: true, src: "videos/walk-front.mp4", poster: "posters/walk-front.jpg", dur: "loop",
+    title: { en: "Front view", ru: "Вид спереди" }, desc: { en: "", ru: "" }, details: { en: [], ru: [] }, stack: [] },
+  { id: "walk-side", group: "g-walk", project: "studies", cat: "anim", loop: true, src: "videos/walk-side.mp4", poster: "posters/walk-side.jpg", dur: "loop",
+    title: { en: "Side view", ru: "Вид сбоку" }, desc: { en: "", ru: "" }, details: { en: [], ru: [] }, stack: [] },
+  { id: "walk-persp", group: "g-walk", project: "studies", cat: "anim", loop: true, src: "videos/walk-persp.mp4", poster: "posters/walk-persp.jpg", dur: "loop",
+    title: { en: "Perspective view", ru: "Вид в перспективе" }, desc: { en: "", ru: "" }, details: { en: [], ru: [] }, stack: [] },
+  { id: "tail-overlap", group: "g-studies", project: "studies", cat: "anim", loop: true, src: "videos/tail-overlap.mp4", poster: "posters/tail-overlap.jpg", dur: "loop",
+    title: { en: "Tail overlap", ru: "Захлёст хвоста" },
+    desc: { en: "A jumping character whose long tail follows through and overlaps the body's motion.", ru: "Прыгающий персонаж, чей длинный хвост запаздывает и захлёстывает движение тела." },
+    details: { en: [], ru: [] }, stack: ["Maya", "Overlapping action"] },
+  { id: "smear", group: "g-studies", project: "studies", cat: "anim", loop: true, src: "videos/smear.mp4", poster: "posters/smear.jpg", dur: "loop",
+    title: { en: "Secondary action and smears", ru: "Вторичное действие и смазы" },
+    desc: { en: "A study of secondary action on three balls that also works as an exercise in squash and stretch, timing and smear frames.", ru: "Этюд на вторичное действие на трёх мячах, который также служит упражнением на сжатие и растяжение, тайминг и смазы." },
+    details: { en: ["Secondary action", "Squash and stretch", "Timing", "Testing how to build a smear effect"], ru: ["Вторичное действие", "Сжатие и растяжение", "Тайминг", "Отработка эффекта смаза"] },
+    stack: ["Maya", "Smears"] },
+  { id: "chest", group: "g-studies", project: "studies", cat: "anim", loop: true, src: "videos/chest.mp4", poster: "posters/chest.jpg", dur: "loop",
+    title: { en: "Chest opening", ru: "Открытие сундука" },
+    desc: { en: "A treasure chest springing open, with a bouncing ball reacting to it.", ru: "Сундук с сокровищами распахивается, и мяч отскакивает в ответ." },
+    details: { en: [], ru: [] }, stack: ["Maya", "Prop animation"] }
+];
+
+/* layout: "quad" = 2x2, "focus" = first clip full width on top, the rest below, "trio" = three in a row */
+const GROUPS = [
+  { id: "g-core", project: "heist", cat: "code", layout: "focus", items: ["odyssey-camera", "hustling", "camera"], title: { en: "Core mechanic and camera system", ru: "Основная механика и система камеры" } },
+  { id: "g-vfx", project: "heist", cat: "vfx", layout: "quad", title: { en: "Environment and pickup effects", ru: "Эффекты окружения и подбора" } },
+  { id: "g-vis", project: "heist", cat: "vfx", layout: "quad", items: ["see-through-hole", "per-instance-color", "see-through", "super-attack"], title: { en: "Visibility shaders and attack effects", ru: "Шейдеры видимости и эффекты атаки" } },
+  { id: "g-zip", project: "adventure", cat: "code", layout: "focus", items: ["zipline-tools", "zipline-1", "zipline-2"], title: { en: "Zipline system", ru: "Система зиплайнов" } },
+  { id: "g-climb", project: "adventure", cat: "code", layout: "focus", items: ["rope", "ledge", "ladder"], title: { en: "Climbing systems", ru: "Системы лазания" } },
+  { id: "g-boss", project: "dust", cat: "anim", layout: "quad", title: { en: "Boss animation set", ru: "Набор анимаций босса" } },
+  { id: "g-pencil", project: "dust", cat: "vfx", layout: "quad", items: ["dop-hatching-run", "dop-bamboo", "dop-boss-portrait", "dop-boss-fight"], title: { en: "Pencil-hatching shader", ru: "Шейдер карандашной штриховки" } },
+  { id: "g-slash", project: "dust", cat: "vfx", layout: "quad", items: ["dop-slash-run", "dop-boss-slash", "dop-trail-red", "dop-trail-cyan"], title: { en: "Sword slash VFX", ru: "VFX ударов мечом" } },
+  { id: "g-walk", project: "studies", cat: "anim", layout: "quad", items: ["walk-front", "walk-side", "walk-persp", "walk-cycle"], title: { en: "Ball-body walk cycle", ru: "Цикл ходьбы: персонаж-мяч" } },
+  { id: "g-studies", project: "studies", cat: "anim", layout: "trio", title: { en: "Animation fundamentals", ru: "Основы анимации" } }
+];
+const PROJECT_ORDER = PROJECTS.map(p => p.id);
+CLIPS.sort((a, b) => PROJECT_ORDER.indexOf(a.project) - PROJECT_ORDER.indexOf(b.project) || (!!a.img - !!b.img));
+
+const CATS = [
+  { id: "all", en: "All", ru: "Все" },
+  { id: "code", anchor: "programming", en: "Programming", ru: "Программирование", color: "var(--c-code)",
+    lead: { en: "Gameplay systems, cameras and editor tools in Unreal Engine, written in C++ and Blueprints.", ru: "Геймплейные системы, камеры и инструменты редактора на Unreal Engine: C++ и Blueprints." } },
+  { id: "vfx", anchor: "vfx", en: "VFX & shaders", ru: "VFX и шейдеры", color: "var(--c-vfx)",
+    lead: { en: "Materials, Niagara effects and stylized shaders built to run on mobile and Meta Quest.", ru: "Материалы, эффекты Niagara и стилизованные шейдеры, рассчитанные на мобильные устройства и Meta Quest." } },
+  { id: "anim", anchor: "animation", en: "Animation", ru: "Анимация", color: "var(--c-anim)",
+    lead: { en: "Character and prop animation in Cascadeur and Maya.", ru: "Анимация персонажей и предметов в Cascadeur и Maya." } }
+];
+
+const T = {
+  en: { rec: "Game developer · Astana, KZ", contactLink: "Contact",
+        role: "Game developer for <b>VR and mobile</b>: gameplay programming, VFX and shaders, and character animation in Unreal Engine.",
+        projects: "Projects", jumpTo: "Jump to", "b-net": "Multiplayer replication", "b-vfx": "Shaders & Niagara VFX", credit: "Godot logo by Andrea Calabró, CC BY 4.0", "omnium-when": "Jun 2023 – Nov 2025 · 2.5 years", "omnium-t": "Game Developer at Omnium",
+        "omnium-d": "Gameplay, VFX and animation across three projects, including Dust of Past on Google Play.",
+        "h-edu": "Education", "ms-t": "Master of Media Technologies · graduated 2025", "bs-t": "Bachelor of Computer Science · graduated 2023", "h-contact": "Contact", copy: "Copy", copied: "Copied", cta: "Let's work together", "cta-sub": "Reach me by email or on Telegram.",
+        "h-lang": "Languages", langs: "Russian (native) · English (B2) · Kazakh (B1)",
+        prev: "← Prev", next: "Next →", work: "Selected work", none: "Clips for this category are on the way.",
+        soon: "soon" },
+  ru: { rec: "Разработчик игр · Астана, KZ", contactLink: "Контакты",
+        role: "Разработчик игр для <b>VR и мобильных платформ</b>: геймплейное программирование, VFX и шейдеры, анимация персонажей на Unreal Engine.",
+        projects: "Проекты", jumpTo: "Перейти к", "b-net": "Сетевая репликация", "b-vfx": "Шейдеры и Niagara VFX", credit: "Логотип Godot: Andrea Calabró, CC BY 4.0", "omnium-when": "Июнь 2023 – ноябрь 2025 · 2,5 года", "omnium-t": "Разработчик игр в Omnium",
+        "omnium-d": "Геймплей, VFX и анимация в трёх проектах, включая Dust of Past в Google Play.",
+        "h-edu": "Образование", "ms-t": "Магистр медиатехнологий · окончил в 2025", "bs-t": "Бакалавр компьютерных наук · окончил в 2023", "h-contact": "Контакты", copy: "Копировать", copied: "Скопировано", cta: "Давайте работать вместе", "cta-sub": "Пишите на почту или в Telegram.",
+        "h-lang": "Языки", langs: "Русский (родной) · Английский (B2) · Казахский (B1)",
+        prev: "← Назад", next: "Далее →", work: "Избранные работы", none: "Ролики в этой категории скоро появятся.",
+        soon: "скоро" }
+};
+
+let lang = "en", cat = "all", current = 0, lastFocus = null;
+try { const s = localStorage.getItem("dt-lang"); if (s === "en" || s === "ru") lang = s; } catch (e) {}
+const $ = id => document.getElementById(id);
+const projectOf = c => PROJECTS.find(p => p.id === c.project);
+const catOf = c => CATS.find(x => x.id === c.cat);
+const byId = id => CLIPS.find(c => c.id === id);
+const reduceMotion = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* the order items appear on the page, used by Prev / Next in the pop-up */
+let ORDER = [];
+
+function groupItems(g) { return g.items ? g.items.map(byId).filter(Boolean) : CLIPS.filter(c => c.group === g.id); }
+function kindLabel(c) { return c.img ? (lang === "ru" ? "▣ Скриншот" : "▣ Screenshot") : (lang === "ru" ? "▶ Видео" : "▶ Video"); }
+function projectsOfGroup(items) { return [...new Set(items.map(c => c.project))].map(id => PROJECTS.find(p => p.id === id)); }
+
+/* ---------- pop-up player ---------- */
+function renderInfo() {
+  const c = CLIPS[current], k = catOf(c), p = projectOf(c);
+  $("stage").style.setProperty("--cat", k.color);
+  $("stage").style.setProperty("--pc", p.color);
+  $("i-cat").textContent = k[lang] + " · " + kindLabel(c).slice(2);
+  $("i-proj").textContent = p.title[lang];
+  $("i-title").textContent = c.title[lang];
+  $("i-desc").textContent = c.desc[lang];
+  $("i-desc").hidden = !c.desc[lang];
+  $("i-details").innerHTML = c.details[lang].map(d => `<li>${d}</li>`).join("");
+  $("i-details").hidden = !c.details[lang].length;
+  $("i-stack").innerHTML = c.stack.map(s => `<li>${s}</li>`).join("");
+  $("i-stack").hidden = !c.stack.length;
+  const pos = ORDER.indexOf(c);
+  $("i-count").textContent = pos >= 0 ? `${pos + 1} / ${ORDER.length}` : "";
+}
+
+function show(c, play) {
+  current = CLIPS.indexOf(c);
+  const v = $("player"), im = $("still");
+  if (c.img) {
+    v.pause(); v.hidden = true; v.removeAttribute("src"); v.dataset.id = "";
+    im.hidden = false; im.src = c.img; im.alt = c.title[lang];
+  } else {
+    im.hidden = true; v.hidden = false;
+    if (v.dataset.id !== c.id) { v.dataset.id = c.id; v.poster = c.poster; v.loop = !!c.loop; v.muted = !!c.loop; v.src = c.src; v.load(); }
+    if (play) { const pr = v.play(); if (pr && pr.catch) pr.catch(() => {}); }
+  }
+  renderInfo();
+  if (location.hash.slice(1) !== c.id) history.replaceState(null, "", "#" + c.id);
+}
+
+function openModal(id) {
+  const c = byId(id); if (!c) return;
+  if ($("modal").hidden) {
+    lastFocus = document.activeElement;
+    $("modal").hidden = false;
+    document.body.classList.add("locked");
+    document.querySelectorAll(".tile video").forEach(v => v.pause());
+  }
+  show(c, true);
+  $("close").focus();
+}
+
+function closeModal() {
+  if ($("modal").hidden) return;
+  const v = $("player"); v.pause();
+  $("modal").hidden = true;
+  document.body.classList.remove("locked");
+  history.replaceState(null, "", location.pathname + location.search);
+  if (lastFocus && lastFocus.focus) lastFocus.focus();
+  resumeTiles();
+}
+
+function step(d) {
+  if (!ORDER.length) return;
+  let pos = ORDER.indexOf(CLIPS[current]);
+  pos = pos < 0 ? 0 : (pos + d + ORDER.length) % ORDER.length;
+  show(ORDER[pos], true);
+}
+
+/* ---------- gallery ---------- */
+function renderNav() {
+  $("jump").innerHTML = `<span class="label">${T[lang].jumpTo}</span>` + CATS.filter(k => k.anchor).map(k =>
+    `<a href="#${k.anchor}" style="--c: ${k.color}"><span class="sw"></span>${k[lang]}</a>`).join("");
+  $("projects").innerHTML = PROJECTS.map(p => { const cv = byId(p.cover); return `<article class="pcard" style="--pc: ${p.color}">
+    ${cv ? `<button class="cover" type="button" data-id="${cv.id}" aria-label="${cv.title[lang]}"><img src="${cv.poster}" alt=""><span class="kind ${cv.img ? "shot" : "vid"}">${kindLabel(cv)}</span></button>` : ""}
+    <h3>${p.title[lang]}</h3><p>${p.desc[lang]}</p>
+    <div class="tags">${p.tags.map(t => `<span>${t}</span>`).join("")}</div>
+    ${p.store ? `<a class="store" href="${p.store}" target="_blank" rel="noopener">${lang === "ru" ? "Открыть в Google Play ↗" : "View on Google Play ↗"}</a>` : ""}</article>`; }).join("");
+  $("projects").querySelectorAll(".cover").forEach(b => b.addEventListener("click", () => openModal(b.dataset.id)));
+}
+
+function renderGallery() {
+  ORDER = [];
+  $("gallery").innerHTML = CATS.filter(k => k.anchor).map(k => {
+    const groups = GROUPS.filter(g => g.cat === k.id);
+    const html = groups.map(g => { const items = groupItems(g); ORDER.push(...items); return groupGrid(g, items); }).join("");
+    const loose = CLIPS.filter(c => c.cat === k.id && !c.group); ORDER.push(...loose);
+    return `<section class="skill" id="${k.anchor}" style="--cat: ${k.color}" aria-labelledby="h-${k.anchor}">
+      <div class="skill-head"><h2 id="h-${k.anchor}">${k[lang]}</h2><p>${k.lead[lang]}</p></div>
+      ${html}${thumbs(loose)}</section>`;
+  }).join("");
+  wireGallery();
+}
+
+function groupGrid(g, items) {
+  const projs = projectsOfGroup(items);
+  const dust = projs.length === 1 && projs[0].id === "dust";
+  return `<div class="group ${g.layout}${dust ? " paper" : ""}">
+    <div class="group-head"><span class="gt">${g.title[lang]}</span>${projs.map(p => `<span class="pchip" style="--pc: ${p.color}">${p.title[lang]}</span>`).join("")}</div>
+    <div class="group-grid">${items.map(c => { const label = (c.gridTitle || c.title)[lang];
+      return `<figure class="tile ${c.img ? "is-shot" : "is-video"}" tabindex="0" role="button" data-id="${c.id}" aria-label="${label}">
+      ${c.img ? `<img src="${c.poster}" alt="" loading="lazy" style="${c.fit ? `object-fit: ${c.fit};` : ""}${c.tileBg ? `background: ${c.tileBg};` : ""}"><span class="kind shot">${kindLabel(c)}</span><span class="hover-icon" aria-hidden="true">⤢</span>`
+              : `<video data-src="${c.gridSrc || c.src}" poster="${c.poster}" muted loop playsinline preload="none" aria-hidden="true"></video><span class="kind vid">${kindLabel(c)}</span><span class="hover-icon" aria-hidden="true">▶</span>`}
+      <span class="pbar" style="background: ${projectOf(c).color}"></span>
+      <figcaption>${label}</figcaption></figure>`; }).join("")}</div></div>`;
+}
+
+function thumbs(list) {
+  if (!list.length) return "";
+  return `<div class="thumbs">${list.map(c => { const k = catOf(c); const badge = c.img ? (lang === "ru" ? "◼ кадр" : "◼ still") : c.dur === "loop" ? (lang === "ru" ? "↻ цикл" : "↻ loop") : c.dur;
+    return `<button class="thumb" type="button" id="t-${c.id}" data-id="${c.id}" style="--cat: ${k.color}">
+      <span class="img"><img src="${c.poster}" alt="" loading="lazy"><span class="ctag">${k[lang]}</span><span class="dur">${badge}</span></span>
+      <span class="t">${c.title[lang]}</span></button>`; }).join("")}</div>`;
+}
+
+let tileObserver = null;
+const startTile = v => { if (!v.src) v.src = v.dataset.src; if (!reduceMotion() && $("modal").hidden) { const p = v.play(); if (p && p.catch) p.catch(() => {}); } };
+function resumeTiles() {
+  document.querySelectorAll(".tile video").forEach(v => { const r = v.getBoundingClientRect(); if (r.bottom > 0 && r.top < innerHeight) startTile(v); });
+}
+function wireGallery() {
+  if (tileObserver) tileObserver.disconnect();
+  const vids = document.querySelectorAll(".tile video");
+  if ("IntersectionObserver" in window) {
+    tileObserver = new IntersectionObserver(es => es.forEach(e => e.isIntersecting ? startTile(e.target) : e.target.pause()), { rootMargin: "200px" });
+    vids.forEach(v => tileObserver.observe(v));
+  } else vids.forEach(startTile);
+  document.querySelectorAll(".tile, .thumb").forEach(t => {
+    t.addEventListener("click", () => openModal(t.dataset.id));
+    if (t.classList.contains("tile")) t.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openModal(t.dataset.id); } });
+  });
+}
+
+function applyLang() {
+  document.documentElement.lang = lang;
+  document.querySelectorAll("[data-i18n]").forEach(el => { const v = T[lang][el.dataset.i18n]; if (v) el.textContent = v; });
+  document.querySelectorAll("[data-i18n-html]").forEach(el => { const v = T[lang][el.dataset.i18nHtml]; if (v) el.innerHTML = v; });
+  document.querySelectorAll(".lang button").forEach(b => b.setAttribute("aria-pressed", b.dataset.lang === lang));
+  renderNav(); renderGallery();
+  if (!$("modal").hidden) renderInfo();
+}
+
+document.querySelectorAll(".lang button").forEach(b => b.addEventListener("click", () => {
+  lang = b.dataset.lang; try { localStorage.setItem("dt-lang", lang); } catch (e) {} applyLang();
+}));
+document.querySelectorAll(".copy").forEach(b => b.addEventListener("click", () => {
+  const done = () => { b.textContent = T[lang].copied; setTimeout(() => { b.textContent = T[lang].copy; }, 1600); };
+  try { navigator.clipboard.writeText(b.dataset.copy).then(done, () => {}); } catch (e) {}
+}));
+$("prev").addEventListener("click", () => step(-1));
+$("next").addEventListener("click", () => step(1));
+$("close").addEventListener("click", closeModal);
+$("modal-backdrop").addEventListener("click", closeModal);
+document.addEventListener("keydown", e => {
+  if ($("modal").hidden) return;
+  if (e.key === "Escape") closeModal();
+  else if (e.key === "ArrowRight" && e.target.tagName !== "VIDEO") step(1);
+  else if (e.key === "ArrowLeft" && e.target.tagName !== "VIDEO") step(-1);
+});
+window.addEventListener("hashchange", () => { const id = location.hash.slice(1); if (byId(id)) openModal(id); });
+
+applyLang();
+{ const h = location.hash.slice(1); if (byId(h)) openModal(h); else if (h && document.getElementById(h)) document.getElementById(h).scrollIntoView(); }
+</script>
+</body>
+</html>
